@@ -1,0 +1,51 @@
+
+# Banking Microservices - Azure DevOps CI Pipeline
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  pythonVersion: '3.12'
+
+steps:
+  # Step 1: Set up Python
+  - task: UsePythonVersion@0
+    displayName: 'Set up Python'
+    inputs:
+      versionSpec: '$(pythonVersion)'
+      addToPath: true
+
+  # Step 2: Upgrade pip
+  - script: |
+      python -m pip install --upgrade pip
+    displayName: 'Upgrade pip'
+
+  # Step 3: Install Customer Service dependencies
+  - script: |
+      python -m pip install -r customer-service/requirements.txt
+    displayName: 'Install Customer Service dependencies'
+
+  # Step 4: Install Account Service dependencies
+  - script: |
+      python -m pip install -r account-service/requirements.txt
+    displayName: 'Install Account Service dependencies'
+
+  # Step 5: Install Payment Service dependencies
+  - script: |
+      python -m pip install -r payment-service/requirements.txt
+    displayName: 'Install Payment Service dependencies'
+
+  # Step 6: Install Notification Service dependencies
+  - script: |
+      python -m pip install -r notification-service/requirements.txt
+    displayName: 'Install Notification Service dependencies'
+
+  # Step 7: Validate Python syntax
+  - script: |
+      python -m compileall -q customer-service account-service payment-service notification-service
+    displayName: 'Validate Python syntax'
